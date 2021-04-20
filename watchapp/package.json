@@ -1,0 +1,43 @@
+{
+  "name": "pebbledeliveries",
+  "author": "JSystems",
+  "version": "1.0.0",
+  "keywords": [
+    "pebble-app"
+  ],
+  "private": true,
+  "dependencies": {
+    "pebblejs": "^1.0.0"
+  },
+  "pebble": {
+    "displayName": "Pebble Deliveries",
+    "uuid": "4a6e23a7-d269-4398-90b0-82a95cf875d0",
+    "sdkVersion": "3",
+    "enableMultiJS": true,
+    "targetPlatforms": [
+      "aplite",
+      "basalt",
+      "chalk",
+      "diorite"
+    ],
+    "capabilities": [
+      "configurable"
+    ],
+    "watchapp": {
+      "watchface": false
+    },
+    "messageKeys": [
+      "dummy"
+    ],
+    "resources": {
+      "media": [
+        {
+          "type": "png",
+          "name": "PACKAGE_ICON",
+          "file": "images/package_25px.png",
+          "menuIcon": true
+        }
+      ]
+    }
+  }
+}
