@@ -43,7 +43,7 @@ $(document).bind('pageinit', function() {
 				return;
 			var pkg = {};
 			$(e).find('input').map(function() {
-				var val = $(this).val();
+				var val = $(this).val().trim();
 				if (!val.length) return;
 				pkg[this.id] = val;
 			});
