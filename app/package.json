@@ -7,7 +7,6 @@
   ],
   "private": true,
   "dependencies": {
-    "json-stringify-safe": "^5.0.1",
     "pebblejs": "^1.0.0"
   },
   "pebble": {

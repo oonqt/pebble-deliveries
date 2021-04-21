@@ -4,8 +4,6 @@ var UI = require('pebblejs/ui');
 var ajax = require('pebblejs/lib/ajax');
 var Feature = require('pebblejs/platform/feature');
 
-var strig = require('json-stringify-safe');
-
 var loadingScreen = new UI.Card({
     status: {
         backgroundColor: Feature.color(0x00AAFF, 'white'),
@@ -19,8 +17,7 @@ var errorScreen = new UI.Card({
         backgroundColor: Feature.color(0x00AAFF, 'white'),
         separator: 'none'
     },
-    title: 'Error!',
-    body: 'Something bad happened.. If this continues, please contact the developer.',
+    title: 'Error!'
 });
 
 var packagesMenu = new UI.Menu({
@@ -54,6 +51,11 @@ var packageInfoCard = new UI.Card({
     scrollable: true
 });
 
+function showError(msg) {
+    errorScreen.body(msg);
+    errorScreen.show();
+}
+
 var packages = Settings.data('packages') || [];
 var menuItems = [];
 
@@ -66,7 +68,7 @@ for (var i = 0; i < packages.length; i++) {
     });
 }
 
-packagesMenu.items(0, menuItems.length ? menuItems : { title: 'No packages', subtitle: 'Add packages via settings' });
+packagesMenu.items(0, menuItems.length ? menuItems : [{ title: 'No packages', subtitle: 'Add packages via settings' }]); // if no items display message
 packagesMenu.show();
 
 packageInfo.on('select', function(e) {
@@ -77,6 +79,8 @@ packageInfo.on('select', function(e) {
 });
 
 packagesMenu.on('select', function(e) {
+    if (e.item.title === 'No packages') return;
+
     loadingScreen.show();
 
     var trackingId = '';
@@ -99,10 +103,15 @@ packagesMenu.on('select', function(e) {
     }, function(data, status) {
         loadingScreen.hide();
 
-        if (status !== 200 || data.error) {
+        if (data.error === 'NO_DATA') {
+            return showError('No tracking data for this package found');
+        } else if (data.states[0].status.toLowerCase().includes('can only contain capit')) {
+            return showError('Invalid tracking number/ID');
+        } else if (status !== 200 || data.error) {
             console.log(status);
             console.log(JSON.stringify(data));
-            errorScreen.show();        
+            showError('Something went wrong, try contacting a developer.');
+            return;        
         }
 
         var packageProgressMarks = [];
@@ -122,7 +131,7 @@ packagesMenu.on('select', function(e) {
     }, function(err) {
         console.log(err);
         loadingScreen.hide();
-        errorScreen.show();
+        showError('Something went wrong. Try checking your network connection.')
     });
 });
 
