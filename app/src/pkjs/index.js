@@ -4,6 +4,8 @@ var UI = require('pebblejs/ui');
 var ajax = require('pebblejs/lib/ajax');
 var Feature = require('pebblejs/platform/feature');
 
+var strig = require('json-stringify-safe');
+
 var loadingScreen = new UI.Card({
     status: {
         backgroundColor: Feature.color(0x00AAFF, 'white'),
@@ -41,6 +43,17 @@ var packageInfo = new UI.Menu({
     sections: [{ title: 'Shipment Info', items: [] }, { title: 'Shipment Progress', items: [] }]
 });
 
+var packageInfoCard = new UI.Card({
+    status: {
+        backgroundColor: Feature.color(0x00AAFF, 'white'),
+        separator: 'none'
+    }, 
+    title: 'Shipment',
+    highlightBackgroundColor: Feature.color(0x00AAFF, 'black'),
+    highlightTextColor: Feature.color('black', 'white'),
+    scrollable: true
+});
+
 var packages = Settings.data('packages') || [];
 var menuItems = [];
 
@@ -53,15 +66,21 @@ for (var i = 0; i < packages.length; i++) {
     });
 }
 
-packagesMenu.items(0, menuItems);
+packagesMenu.items(0, menuItems.length ? menuItems : { title: 'No packages', subtitle: 'Add packages via settings' });
 packagesMenu.show();
+
+packageInfo.on('select', function(e) {
+    if (e.section.title !== 'Shipment Progress') return;
+
+    packageInfoCard.body(e.item.title);
+    packageInfoCard.show();
+});
 
 packagesMenu.on('select', function(e) {
     loadingScreen.show();
 
     var trackingId = '';
-    // var trackingIdSplit = e.item.subtitle.split('');
-    var trackingIdSplit = '9400111202509853968140';
+    var trackingIdSplit = e.item.subtitle.split('');
 
     for (var i = 0; i < trackingIdSplit.length; i++) {
         trackingId += String.fromCharCode(trackingIdSplit[i].charCodeAt(0) + 18);
@@ -100,8 +119,6 @@ packagesMenu.on('select', function(e) {
         packageInfo.items(0, [{ title: 'Status: ' + data.status }]);
         packageInfo.items(1, packageProgressMarks);
         packageInfo.show();
-
-        console.log(JSON.stringify(data));
     }, function(err) {
         console.log(err);
         loadingScreen.hide();
