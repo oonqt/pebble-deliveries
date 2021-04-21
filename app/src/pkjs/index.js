@@ -105,7 +105,7 @@ packagesMenu.on('select', function(e) {
 
         if (data.error === 'NO_DATA') {
             return showError('No tracking data for this package found');
-        } else if (data.states[0].status.toLowerCase().includes('can only contain capit')) {
+        } else if (data.states[0].status && data.states[0].status.toLowerCase().indexOf('must contain only capital') !== -1) {
             return showError('Invalid tracking number/ID');
         } else if (status !== 200 || data.error) {
             console.log(status);
