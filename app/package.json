@@ -11,7 +11,7 @@
   },
   "pebble": {
     "displayName": "Pebble Deliveries",
-    "uuid": "4a6e23a7-d269-4398-90b0-82a95cf875d0",
+    "uuid": "9b6e24a7-d369-4568-90b0-82a95df875d8",
     "sdkVersion": "3",
     "enableMultiJS": true,
     "targetPlatforms": [

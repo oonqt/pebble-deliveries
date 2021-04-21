@@ -1,22 +1,14 @@
 require('pebblejs');
-var Settings = require('pebblejs/settings')
-var Clay = require('./clay');
-var clayConfig = require('./config');
-var clay = new Clay(clayConfig, customClay, { autoHandleEvents: false });
+var Settings = require('pebblejs/settings');
 
-function customClay(min) {
-    console.log(JSON.stringify(this));
-    console.log(JSON.stringify(min));
-}
-
-Pebble.addEventListener('showConfiguration', function(e) {
-    Pebble.openURL(clay.generateUrl());
+Pebble.addEventListener('showConfiguration', function() {
+    var data = Settings.data('packages') || [];
+    Pebble.openURL('https://ineal.me/pebble/deliveries/configuration?data=' + encodeURIComponent(JSON.stringify({ packages: data })));
 });
 
 Pebble.addEventListener('webviewclosed', function(e) {
-    console.log(JSON.stringify(e.response));
+    if (!e.data) return;
 
-    if (e && !e.response) return;
-
-    Settings.option(clay.getSettings(e.response));
+    const packages = JSON.parse(e.data).packages;
+    Settings.data('packages', packages);
 });
