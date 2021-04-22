@@ -121,7 +121,7 @@ packagesMenu.on('select', function(e) {
 
             packageProgressMarks.push({
                 title: state.status,
-                subtitle: 'At: ' + new Date(state.date).toLocaleString()
+                subtitle: 'At: ' + new Date(state.date).toLocaleString('en-US', { day: 'numeric', month: 'numeric', hour: 'numeric', minute: 'numeric' })
             });
         }
 
