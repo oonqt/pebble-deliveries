@@ -132,7 +132,7 @@ packagesMenu.on('select', function(e) {
 
             packageProgressMarks.push({
                 title: state.status,
-                subtitle: 'At: ' + (date[1] - 0) // remove trailing zeros + '/' + date[2] + ', ' + (time[0] - 0) + ':' + time[1]
+                subtitle: 'At: ' + (date[1] - 0) /* remove trailing zeros */ + '/' + date[2] + ', ' + (time[0] - 0) + ':' + time[1]
             });
         }
 
