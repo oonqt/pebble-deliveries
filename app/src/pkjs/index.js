@@ -56,19 +56,23 @@ function showError(msg) {
     errorScreen.show();
 }
 
-var packages = Settings.data('packages') || [];
-var menuItems = [];
+function updatePackagesMenu(packages) {
+    var menuItems = [];
 
-for (var i = 0; i < packages.length; i++) {
-    var package = packages[i];
+    for (var i = 0; i < packages.length; i++) {
+        var package = packages[i];
 
-    menuItems.push({
-        title: package.itemName,
-        subtitle: package.trackingNumber
-    });
+        menuItems.push({
+            title: package.itemName,
+            subtitle: package.trackingNumber
+        });
+    }
+
+    packagesMenu.items(0, menuItems.length ? menuItems : [{ title: 'No packages', subtitle: 'Add packages via settings' }]); // if no items display message
 }
 
-packagesMenu.items(0, menuItems.length ? menuItems : [{ title: 'No packages', subtitle: 'Add packages via settings' }]); // if no items display message
+var packages = Settings.data('packages') || [];
+updatePackagesMenu(packages);
 packagesMenu.show();
 
 packageInfo.on('select', function(e) {
@@ -97,7 +101,7 @@ packagesMenu.on('select', function(e) {
         data: {
             trackingId: trackingId,
             carrier: 'Auto-Detect',
-            language: 'es',
+            language: 'en',
             se: 'Pebble/Deliveries'
         }
     }, function(data, status) {
@@ -119,7 +123,7 @@ packagesMenu.on('select', function(e) {
         for (var i = 0; i < data.states.length; i++) {
             var state = data.states[i];
             
-            /* this is a very sped way of doing this but
+            /* ok this is a very sped way of doing this but
              api doesnt return that it is utc+10 so Date object tries to localize the date into correct timezone
              when it is already correct */
             var at = state.date.split('T');;
@@ -128,7 +132,7 @@ packagesMenu.on('select', function(e) {
 
             packageProgressMarks.push({
                 title: state.status,
-                subtitle: 'At: ' + (date[1] - 0) + '/' + date[2] + ', ' + (time[0] - 0) + ':' + time[1]
+                subtitle: 'At: ' + (date[1] - 0) // remove trailing zeros + '/' + date[2] + ', ' + (time[0] - 0) + ':' + time[1]
             });
         }
 
@@ -152,4 +156,5 @@ Pebble.addEventListener('webviewclosed', function(e) {
 
     const packages = JSON.parse(e.data).packages;
     Settings.data('packages', packages);
+    updatePackagesMenu(packages);
 });
