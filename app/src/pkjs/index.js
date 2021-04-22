@@ -3,6 +3,7 @@ var Settings = require('pebblejs/settings');
 var UI = require('pebblejs/ui');
 var ajax = require('pebblejs/lib/ajax');
 var Feature = require('pebblejs/platform/feature');
+var padStart = require('pad-start');
 
 var loadingScreen = new UI.Card({
     status: {
@@ -79,12 +80,12 @@ packageInfo.on('select', function(e) {
 });
 
 packagesMenu.on('select', function(e) {
-    if (e.item.title === 'No packages') return;
+    // if (e.item.title === 'No packages') return;
 
     loadingScreen.show();
 
     var trackingId = '';
-    var trackingIdSplit = e.item.subtitle.split('');
+    var trackingIdSplit = '9400111202509853968140' // e.item.subtitle.split('');
 
     for (var i = 0; i < trackingIdSplit.length; i++) {
         trackingId += String.fromCharCode(trackingIdSplit[i].charCodeAt(0) + 18);
@@ -118,10 +119,17 @@ packagesMenu.on('select', function(e) {
 
         for (var i = 0; i < data.states.length; i++) {
             var state = data.states[i];
+            
+            /* this is a very sped way of doing this but
+             api doesnt return that it is utc+10 so Date object tries to localize the date into correct timezone
+             when it is already correct */
+            var at = state.date.split('T');;
+            var date = at[0].split('-');
+            var time = at[1].split(':');
 
             packageProgressMarks.push({
                 title: state.status,
-                subtitle: 'At: ' + new Date(state.date).toLocaleString('en-US', { day: 'numeric', month: 'numeric', hour: 'numeric', minute: 'numeric' })
+                subtitle: 'At: ' + (date[1] - 0) + '/' + date[2] + ', ' + (time[0] - 0) + ':' + time[1]
             });
         }
 
