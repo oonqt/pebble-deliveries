@@ -7,7 +7,6 @@
   ],
   "private": true,
   "dependencies": {
-    "pad-start": "^1.0.2",
     "pebblejs": "^1.0.0"
   },
   "pebble": {

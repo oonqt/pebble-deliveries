@@ -3,7 +3,6 @@ var Settings = require('pebblejs/settings');
 var UI = require('pebblejs/ui');
 var ajax = require('pebblejs/lib/ajax');
 var Feature = require('pebblejs/platform/feature');
-var padStart = require('pad-start');
 
 var loadingScreen = new UI.Card({
     status: {
@@ -98,7 +97,7 @@ packagesMenu.on('select', function(e) {
         data: {
             trackingId: trackingId,
             carrier: 'Auto-Detect',
-            language: 'en',
+            language: 'es',
             se: 'Pebble/Deliveries'
         }
     }, function(data, status) {
