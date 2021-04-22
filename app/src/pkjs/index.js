@@ -83,12 +83,12 @@ packageInfo.on('select', function(e) {
 });
 
 packagesMenu.on('select', function(e) {
-    // if (e.item.title === 'No packages') return;
+    if (e.item.title === 'No packages') return;
 
     loadingScreen.show();
 
     var trackingId = '';
-    var trackingIdUnformatted = '9400111202509853968140' //e.item.subtitle.split('');
+    var trackingIdUnformatted = e.item.subtitle.split('');
 
     for (var i = 0; i < trackingIdUnformatted.length; i++) {
         trackingId += String.fromCharCode(trackingIdUnformatted[i].charCodeAt(0) + 18);
