@@ -83,15 +83,15 @@ packageInfo.on('select', function(e) {
 });
 
 packagesMenu.on('select', function(e) {
-    if (e.item.title === 'No packages') return;
+    // if (e.item.title === 'No packages') return;
 
     loadingScreen.show();
 
     var trackingId = '';
-    var trackingIdSplit = e.item.subtitle.split('');
+    var trackingIdUnformatted = '9400111202509853968140' //e.item.subtitle.split('');
 
-    for (var i = 0; i < trackingIdSplit.length; i++) {
-        trackingId += String.fromCharCode(trackingIdSplit[i].charCodeAt(0) + 18);
+    for (var i = 0; i < trackingIdUnformatted.length; i++) {
+        trackingId += String.fromCharCode(trackingIdUnformatted[i].charCodeAt(0) + 18);
     }
 
     ajax({
@@ -130,9 +130,11 @@ packagesMenu.on('select', function(e) {
             var date = at[0].split('-');
             var time = at[1].split(':');
 
+            var hour = parseInt(time[0]);
+
             packageProgressMarks.push({
                 title: state.status,
-                subtitle: 'At: ' + (date[1] - 0) /* remove trailing zeros */ + '/' + date[2] + ', ' + (time[0] - 0) + ':' + time[1]
+                subtitle: 'At: ' + (date[1] - 0) /* remove trailing zeros */ + '/' + date[2] + ', ' + (hour >= 12 ? hour - 12 : hour) + ':' + time[1] + (hour >= 12 ? ' PM' : ' AM')
             });
         }
 
