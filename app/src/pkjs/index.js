@@ -87,23 +87,11 @@ packagesMenu.on('select', function(e) {
 
     loadingScreen.show();
 
-    var trackingId = '';
-    var trackingIdUnformatted = e.item.subtitle.split('');
-
-    for (var i = 0; i < trackingIdUnformatted.length; i++) {
-        trackingId += String.fromCharCode(trackingIdUnformatted[i].charCodeAt(0) + 18);
-    }
+    var trackingId = e.item.subtitle;
 
     ajax({
-        url: 'https://parcelsapp.com/api/v2/parcels',
-        method: 'POST',
+        url: 'https://deliveries.memester.xyz/api/tracking/' + trackingId,
         type: 'json',
-        data: {
-            trackingId: trackingId,
-            carrier: 'Auto-Detect',
-            language: 'en',
-            se: 'Pebble/Deliveries'
-        }
     }, function(data, status) {
         loadingScreen.hide();
 
