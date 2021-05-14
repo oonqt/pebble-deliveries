@@ -29,7 +29,7 @@ app.get('/api/tracking/:trackingId', async (req, res) => {
         res.json({
             minRemaining: remaining[0] ?? null,
             maxRemaining: remaining[1] ?? null,
-            daysInTransit: transitDuration ? transitDuration.val : null,
+            daysInTransit: transitDuration && transitDuration.val ? parseInt(transitDuration.val) : null,
             status: statusMap[data.status] ?? data.status,
             states: data.states
         });
