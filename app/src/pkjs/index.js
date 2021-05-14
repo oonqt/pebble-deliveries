@@ -126,7 +126,18 @@ packagesMenu.on('select', function(e) {
             });
         }
 
-        packageInfo.items(0, [{ title: 'Status: ' + data.status }]);
+        var meta = [{ title: 'Status: ', subtitle: data.status }];
+        if (data.daysInTransit) {
+            meta.push({ title: 'Days in Transit: ', subtitle: data.daysInTransit });
+        }
+        if (data.minRemaining) { // I'm not 100% sure that ETA will always exist.. Would be nice if I had some other packages.. Better safe than sorry I guess, could remove in the future
+            meta.push({
+                title: 'ETA:',
+                subtitle: data.minRemaining + ' - ' + data.maxRemaining + ' Days'
+            });
+        }
+
+        packageInfo.items(0, meta);
         packageInfo.items(1, packageProgressMarks);
         packageInfo.show();
     }, function(err) {
