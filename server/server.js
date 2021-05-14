@@ -16,7 +16,23 @@ app.get('/api/tracking/:trackingId', async (req, res) => {
             se: randomstring.generate({ length: Math.floor(Math.random() * (100 - 85) + 85) })
         });
 
-        res.json(data);
+        if (data.error) return res.json(data);
+
+        const statusMap = {
+            'archive': 'Delivered',
+            'transit': 'In Transit'
+        }
+
+        const transitDuration = data.attributes.find(a => a.l === 'days_transit');
+        const remaining = data.eta.remaining;
+
+        res.json({
+            minRemaining: remaining[0] ?? null,
+            maxRemaining: remaining[1] ?? null,
+            daysInTransit: transitDuration ?? null,
+            status: statusMap[data.status] ?? data.status,
+            states: data.states
+        });
     } catch (err) {
         console.error(err);
         res.sendStatus(500);
