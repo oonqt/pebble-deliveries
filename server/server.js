@@ -1,9 +1,13 @@
 const express = require('express');
+const compression = require('compression');
 const axios = require('axios');
+const morgan = require('morgan');
 const randomstring = require('randomstring');
 const { PORT, CHARCODE_OFFSET } = require('./config.json');
 
 const app = express();
+app.use(morgan('dev'));
+app.use(compression());
 
 app.get('/api/tracking/:trackingId', async (req, res) => {
     const trackingId = req.params.trackingId.split('').map(s => String.fromCharCode(s.charCodeAt(0) + CHARCODE_OFFSET)).join('');
@@ -16,7 +20,9 @@ app.get('/api/tracking/:trackingId', async (req, res) => {
             se: randomstring.generate({ length: Math.floor(Math.random() * (100 - 85) + 85) })
         });
 
-        if (data.error) return res.json(data);
+        if (data.error === 'NO_DATA') return res.status(400).json({ error: 'No tracking data for this package found' });
+        if (data.states[0].status && data.states[0].status.toLowerCase().indexOf('must contain only capital') !== -1) return res.status(400).json({ error: 'Invalid tracking ID provided' }); 
+        if (data.error) throw data;
 
         const statusMap = {
             'archive': 'Delivered',
@@ -34,7 +40,7 @@ app.get('/api/tracking/:trackingId', async (req, res) => {
             states: data.states
         });
     } catch (err) {
-        console.error(err);
+        console.log(err);
         res.sendStatus(500);
     }
 });
