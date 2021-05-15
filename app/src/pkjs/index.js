@@ -1,6 +1,7 @@
 require('pebblejs');
 var Settings = require('pebblejs/settings');
 var UI = require('pebblejs/ui');
+var Vibe = require('pebblejs/ui/vibe');
 var ajax = require('pebblejs/lib/ajax');
 var Feature = require('pebblejs/platform/feature');
 
@@ -92,19 +93,8 @@ packagesMenu.on('select', function(e) {
     ajax({
         url: 'https://deliveries.memester.xyz/api/tracking/' + trackingId,
         type: 'json',
-    }, function(data, status) {
+    }, function(data) {
         loadingScreen.hide();
-
-        if (data.error === 'NO_DATA') {
-            return showError('No tracking data for this package found');
-        } else if (data.states[0].status && data.states[0].status.toLowerCase().indexOf('must contain only capital') !== -1) {
-            return showError('Invalid tracking number/ID');
-        } else if (status !== 200 || data.error) {
-            console.log(status);
-            console.log(JSON.stringify(data));
-            showError('Something went wrong, try contacting a developer.');
-            return;        
-        }
 
         var packageProgressMarks = [];
 
@@ -141,13 +131,19 @@ packagesMenu.on('select', function(e) {
         packageInfo.items(1, packageProgressMarks);
         packageInfo.show();
     }, function(err) {
-        console.log(err);
         loadingScreen.hide();
-        showError('Something went wrong. Try checking your network connection.')
+        Vibe.vibrate('double');
+        
+        if (err.error) {
+            showError(err.error);
+        } else {
+            console.log(JSON.stringify(err));
+            showError('Something went wrong. Try checking your network connection.')
+        }
     });
 });
 
-Pebble.addEventListener('showConfiguration', function() {
+Pebble.addEventListener('showConfiguratioviben', function() {
     var data = Settings.data('packages') || [];
     Pebble.openURL('https://oonqt.github.io/pebble-deliveries/config?data=' + encodeURIComponent(JSON.stringify({ packages: data })));
 });
