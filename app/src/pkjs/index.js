@@ -104,7 +104,7 @@ packagesMenu.on('select', function(e) {
             /* ok this is a very sped way of doing this but
              api doesnt return that it is utc+10 so Date object tries to localize the date into correct timezone
              when it is already correct */
-            var at = state.date.split('T');;
+            var at = state.date.split('T');
             var date = at[0].split('-');
             var time = at[1].split(':');
 
@@ -123,7 +123,7 @@ packagesMenu.on('select', function(e) {
         if (data.minRemaining) { // I'm not 100% sure that ETA will always exist.. Would be nice if I had some other packages.. Better safe than sorry I guess, could remove in the future
             meta.push({
                 title: 'ETA:',
-                subtitle: data.minRemaining + ' - ' + data.maxRemaining + ' Days'
+                subtitle: data.minRemaining + '-' + data.maxRemaining + ' Days'
             });
         }
 
@@ -143,7 +143,7 @@ packagesMenu.on('select', function(e) {
     });
 });
 
-Pebble.addEventListener('showConfiguratioviben', function() {
+Pebble.addEventListener('showConfiguration', function() {
     var data = Settings.data('packages') || [];
     Pebble.openURL('https://oonqt.github.io/pebble-deliveries/config?data=' + encodeURIComponent(JSON.stringify({ packages: data })));
 });
