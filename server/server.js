@@ -1,6 +1,6 @@
 const express = require('express');
 const compression = require('compression');
-const axios = require('axios');
+const { curly } = require('node-libcurl');
 const morgan = require('morgan');
 const randomstring = require('randomstring');
 const { PORT, CHARCODE_OFFSET } = require('./config.json');
@@ -13,13 +13,20 @@ app.get('/api/tracking/:trackingId', async (req, res) => {
     const trackingId = req.params.trackingId.split('').map(s => String.fromCharCode(s.charCodeAt(0) + CHARCODE_OFFSET)).join('');
 
     try {
-        const { data } = await axios.post('https://parcelsapp.com/api/v2/parcels', {
-            trackingId,
-            carrier: 'Auto-Detect',
-            language: 'en',
-            se: randomstring.generate({ length: Math.floor(Math.random() * (100 - 85) + 85) })
+        const { statusCode, data } = await curly.post('https://parcelsapp.com/api/v2/parcels', {
+            postFields: JSON.stringify({
+                trackingId,
+                carrier: 'Auto-Detect',
+                language: 'en',
+                se: randomstring.generate({ length: Math.floor(Math.random() * (100 - 85) + 85) })
+            }),
+            httpHeader: [
+                'Content-Type: application/json',
+                'Accept: application/json'
+            ]
         });
 
+        if (statusCode !== 200) return res.status(500).json({ error: 'Failed to fetch tracking information' });
         if (data.error === 'NO_DATA') return res.status(400).json({ error: 'No tracking data for this package found' });
         if (data.states[0].status && data.states[0].status.toLowerCase().indexOf('must contain only capital') !== -1) return res.status(400).json({ error: 'Invalid tracking ID provided' }); 
         if (data.error) throw data;
