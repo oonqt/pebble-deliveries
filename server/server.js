@@ -1,9 +1,16 @@
 const express = require('express');
+const fs = require('fs');
+const tls = require('tls');
+const path = require('path');
 const compression = require('compression');
 const { curly } = require('node-libcurl');
 const morgan = require('morgan');
 const randomstring = require('randomstring');
 const { PORT, CHARCODE_OFFSET } = require('./config.json');
+
+const certFile = path.join(__dirname, 'cert.pem');
+const tlsData = tls.rootCertificates.join('\n');
+fs.writeFileSync(certFile, tlsData);
 
 const app = express();
 app.use(morgan('dev'));
@@ -23,7 +30,8 @@ app.get('/api/tracking/:trackingId', async (req, res) => {
             httpHeader: [
                 'Content-Type: application/json',
                 'Accept: application/json'
-            ]
+            ],
+            caInfo: certFile
         });
 
         if (statusCode !== 200) return res.status(500).json({ error: 'Failed to fetch tracking information' });
@@ -37,7 +45,7 @@ app.get('/api/tracking/:trackingId', async (req, res) => {
         }
 
         const transitDuration = data.attributes.find(a => a.l === 'days_transit');
-        const remaining = data.eta.remaining;
+        const remaining = data.eta ? data.eta.remaining : [];
 
         res.json({
             minRemaining: remaining[0] ?? null,
