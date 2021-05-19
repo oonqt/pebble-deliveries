@@ -8,6 +8,7 @@ const morgan = require('morgan');
 const randomstring = require('randomstring');
 const { PORT, CHARCODE_OFFSET } = require('./config.json');
 
+// Fix https://github.com/JCMais/node-libcurl/blob/HEAD/COMMON_ISSUES.md#error-ssl-peer-certificate-or-ssh-remote-key-was-not-ok
 const certFile = path.join(__dirname, 'cert.pem');
 const tlsData = tls.rootCertificates.join('\n');
 fs.writeFileSync(certFile, tlsData);
@@ -20,7 +21,7 @@ app.get('/api/tracking/:trackingId', async (req, res) => {
     const trackingId = req.params.trackingId.split('').map(s => String.fromCharCode(s.charCodeAt(0) + CHARCODE_OFFSET)).join('');
 
     try {
-        const { statusCode, data } = await curly.post('https://parcelsapp.com/api/v2/parcels', {
+        const { statusCode, data, headers } = await curly.post('https://parcelsapp.com/api/v2/parcels', {
             postFields: JSON.stringify({
                 trackingId,
                 carrier: 'Auto-Detect',
@@ -33,6 +34,8 @@ app.get('/api/tracking/:trackingId', async (req, res) => {
             ],
             caInfo: certFile
         });
+
+        console.log(headers);
 
         if (statusCode !== 200) return res.status(500).json({ error: 'Failed to fetch tracking information' });
         if (data.error === 'NO_DATA') return res.status(400).json({ error: 'No tracking data for this package found' });
