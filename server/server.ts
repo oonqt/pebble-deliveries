@@ -20,15 +20,27 @@ app.use(morgan('dev'));
 app.use(compression());
 app.use(express.json());
 
-app.post('/timeline', (req, res) => {
-    const token = req.body.token;
+app.post('/timelineConfig', async (req, res) => {
+    const timelineToken = req.body.timelineToken;
+    const watchToken = req.body.watchToken;
     const packages = req.body.packages;
     const enabled = req.body.enabled;
 
-    if (typeof token !== 'string' || !(packages instanceof Array) || typeof enabled !== 'boolean') return res.sendStatus(400);
+    if (typeof timelineToken !== 'string' || typeof watchToken !== 'string' || !(packages instanceof Array) || typeof enabled !== 'boolean') return res.sendStatus(400);
 
     try {
+        let timelineInfo = await User.findOne({ watchToken, timelineToken });
 
+        if (!timelineInfo) {
+            timelineInfo = new User({
+                watchToken, timelineToken
+            });
+        }
+
+        timelineInfo.pinsEnabled = enabled;
+        timelineInfo.packages = packages;
+
+        await timelineInfo.save();
     } catch (err) {
         console.error(err);
         res.sendStatus(500);

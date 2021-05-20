@@ -6,6 +6,7 @@ export interface Package {
 
 export interface User extends Document {
     timelineToken: string;
+    watchToken: string;
     packages: Package[];
     pinsEnabled: boolean;
 }
@@ -17,6 +18,10 @@ const UserSchema: Schema<User> = new Schema({
     },
     timelineToken: {
         type: String,
+        required: true
+    },
+    watchToken: {
+        type: String,
         required: true,
         unique: true
     },
@@ -24,11 +29,14 @@ const UserSchema: Schema<User> = new Schema({
         type: [
             {
                 name: String,
-                trackingId: Number
+                trackingId: Number,
+                delivered: Boolean
             }
         ],
         default: []
     }
 });
+
+UserSchema.index({ watchToken: 1, timelineToken: 1 });
 
 export default mongoose.model<User>('users', UserSchema);
