@@ -44,7 +44,8 @@ app.get('/api/tracking/:trackingId', async (req, res) => {
 
         const statusMap = {
             'archive': 'Delivered',
-            'transit': 'In Transit'
+            'transit': 'In Transit',
+            'pickup': 'Carrier Pickup'
         }
 
         const transitDuration = data.attributes.find(a => a.l === 'days_transit');
