@@ -1,12 +1,14 @@
-const express = require('express');
-const fs = require('fs');
-const tls = require('tls');
-const path = require('path');
-const compression = require('compression');
-const { curly } = require('node-libcurl');
-const morgan = require('morgan');
-const randomstring = require('randomstring');
-const { PORT, CHARCODE_OFFSET } = require('./config.json');
+import express from 'express';
+import fs from 'fs';
+import tls from 'tls';
+import path from 'path';
+import compression from 'compression';
+import { curly } from 'node-libcurl';
+import morgan from 'morgan';
+import randomstring from 'randomstring';
+import mongoose from 'mongoose';
+import User from './user.model';
+import { PORT, CHARCODE_OFFSET, DBCONN } from './config';
 
 // Fix https://github.com/JCMais/node-libcurl/blob/HEAD/COMMON_ISSUES.md#error-ssl-peer-certificate-or-ssh-remote-key-was-not-ok
 const certFile = path.join(__dirname, 'cert.pem');
@@ -16,6 +18,22 @@ fs.writeFileSync(certFile, tlsData);
 const app = express();
 app.use(morgan('dev'));
 app.use(compression());
+app.use(express.json());
+
+app.post('/timeline', (req, res) => {
+    const token = req.body.token;
+    const packages = req.body.packages;
+    const enabled = req.body.enabled;
+
+    if (typeof token !== 'string' || !(packages instanceof Array) || typeof enabled !== 'boolean') return res.sendStatus(400);
+
+    try {
+
+    } catch (err) {
+        console.error(err);
+        res.sendStatus(500);
+    }
+});
 
 app.get('/api/tracking/:trackingId', async (req, res) => {
     const trackingId = req.params.trackingId.split('').map(s => String.fromCharCode(s.charCodeAt(0) + CHARCODE_OFFSET)).join('');
@@ -64,4 +82,13 @@ app.get('/api/tracking/:trackingId', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => console.log('Listening on:', PORT));
+mongoose.connect(DBCONN, {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useFindAndModify: true,
+    useUnifiedTopology: true
+}).then(() => {
+    console.log('DB Connection established');
+
+    app.listen(PORT, () => console.log('Listening on:', PORT));
+}).catch(console.error);
