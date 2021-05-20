@@ -8,6 +8,7 @@
 		<title>Package Tracker Configuration</title>
 		<link href='//maxcdn.bootstrapcdn.com/bootswatch/3.3.0/flatly/bootstrap.min.css' rel='stylesheet'>
 		<link href='//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css' rel='stylesheet'>
+		<link href='https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css' rel='stylesheet'>
 		<link href='style.css' rel='stylesheet'>
 	</head>
 
@@ -43,7 +44,9 @@
 
 			<p class='help-block'>Tip: Slide title to delete.</p>
 
-			<button type='submit' class='btn btn-primary btn-block btn-lg btn-save'>Save</button>
+			<input type='checkbox' data-toggle='toggle' id='enableTimelinePins' data-width='200' data-on='Timeline Pins Enabled' data-off='Timeline Pins Disabled'>
+			
+			<button type='submit' style='margin-top: 25px' class='btn btn-primary btn-block btn-lg btn-save'>Save</button>
 		</div>
 
 		<script src='//code.jquery.com/jquery-1.11.0.min.js'></script>
@@ -51,6 +54,7 @@
 		<script src='//code.jquery.com/ui/1.11.2/jquery-ui.min.js'></script>
 		<script src='//code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js'></script>
 		<script src='//cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js'></script>
+		<script src='https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js'></script>
 		<script src='main.js'></script>
 	</body>
 </html>

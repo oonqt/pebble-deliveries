@@ -50,8 +50,13 @@ $(document).bind('pageinit', function() {
 			if(Object.keys(pkg).length !== 2) return;
 			return pkg;
 		});
+
+		var timelinePinsEnabled =
+			document.getElementById('enableTimelinePins').checked;
+
 		var ret = {
-			packages: packages
+			packages: packages,
+			timelinePinsEnabled: timelinePinsEnabled,
 		};
 		document.location = 'pebblejs://close#' + encodeURIComponent(JSON.stringify(ret));
 	});
