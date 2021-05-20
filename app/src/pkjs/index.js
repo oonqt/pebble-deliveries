@@ -145,13 +145,24 @@ packagesMenu.on('select', function(e) {
 
 Pebble.addEventListener('showConfiguration', function() {
     var data = Settings.data('packages') || [];
-    Pebble.openURL('https://oonqt.github.io/pebble-deliveries/config?data=' + encodeURIComponent(JSON.stringify({ packages: data })));
+    var timelinePinsEnabled = Settings.option('timelinePinsEnabled');
+
+    Pebble.openURL(
+        'https://oonqt.github.io/pebble-deliveries/config?data=' +
+        encodeURIComponent(
+            JSON.stringify({
+                packages: data,
+                timelinePinsEnabled: timelinePinsEnabled,
+            })
+        )
+	);
 });
 
 Pebble.addEventListener('webviewclosed', function(e) {
     if (!e.data) return;
 
-    const packages = JSON.parse(e.data).packages;
-    Settings.data('packages', packages);
-    updatePackagesMenu(packages);
+    const data = JSON.parse(e.data);
+    Settings.data('packages', data.packages);
+    Settings.option('enableTimelinePins', data.enableTimelinePins);
+    updatePackagesMenu(data.packages);
 });
